@@ -853,7 +853,11 @@
                 document.getElementById('verifyCodeBtn').style.display = 'block';
             } catch (error) {
                 console.error('Phone Sign In Error:', error);
-                alert('Ошибка отправки кода');
+                if (error.code === 'auth/billing-not-enabled') {
+                    alert('Phone authentication requires Firebase billing to be enabled. Используйте Google-вход или включите биллинг и добавьте тестовые номера в Firebase Auth.');
+                } else {
+                    alert('Ошибка отправки кода');
+                }
             }
         });
 
@@ -923,7 +927,7 @@
                     uid: currentUser.uid,
                     displayName: currentUser.displayName
                 },
-                board: Array(9).fill(null),
+                board: Array(9).fill(''),
                 currentPlayer: 1,
                 gameState: 'waiting',
                 createdAt: new Date().toISOString()
@@ -1024,7 +1028,7 @@
             // Обновляем доску
             const cells = document.querySelectorAll('.game-cell');
             cells.forEach((cell, index) => {
-                const value = room.board[index];
+                const value = board[index];
                 cell.textContent = value || '';
                 cell.className = 'game-cell';
                 if (value) {
@@ -1046,7 +1050,9 @@
                 const isPlayer1 = room.player1.uid === currentUser.uid;
                 const playerNumber = isPlayer1 ? 1 : 2;
 
-                if (room.board[index] !== null) {
+                const board = normalizeBoard(room.board);
+
+                if (board[index] !== '') {
                     alert('Ячейка уже занята');
                     return;
                 }
@@ -1057,7 +1063,7 @@
                     return;
                 }
 
-                const newBoard = [...room.board];
+                const newBoard = [...board];
                 const symbol = playerNumber === 1 ? 'X' : 'O';
                 newBoard[index] = symbol;
 
@@ -1108,7 +1114,7 @@
                 }
             }
 
-            if (board.every(cell => cell !== null)) {
+            if (board.every(cell => cell !== '')) {
                 return { draw: true };
             }
 
@@ -1142,7 +1148,7 @@
             const room = currentGameState;
             try {
                 await update(ref(database, `rooms/${currentRoom}`), {
-                    board: Array(9).fill(null),
+                    board: Array(9).fill(''),
                     currentPlayer: 1,
                     gameState: 'playing',
                     winner: null

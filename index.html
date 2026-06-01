@@ -51,7 +51,7 @@
         <!-- Game Mode Selection -->
         <div class="btn-group btn-group-cyan">
           <button class="control-btn active" id="mode-bot" data-mode="bot">Против Бота</button>
-          <button class="control-btn" id="mode-local" data-mode="local">Локально (2P)</button>
+          <button class="control-btn" id="mode-online" data-mode="online">Играть Онлайн (1v1)</button>
         </div>
         
         <!-- Sound Control Button -->
@@ -96,6 +96,56 @@
     <div class="turn-status x-turn" id="turn-indicator">
       <span class="turn-dot"></span>
       <span class="turn-text" id="turn-text">Ваш ход (X)</span>
+    </div>
+
+    <!-- Online Multiplayer Lobby Panels -->
+    <div class="lobby-container hidden" id="lobby-panel">
+      <div class="lobby-card">
+        <h3 class="lobby-title">Онлайн Мультиплеер</h3>
+        <p class="lobby-desc">Создайте приватную комнату или подключитесь по коду к существующей игре.</p>
+        
+        <div class="lobby-actions">
+          <button class="btn-primary" id="btn-create-lobby" style="width: 100%;">
+            <svg viewBox="0 0 24 24" style="width: 18px; height: 18px; fill: currentColor; margin-right: 6px;">
+              <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+            </svg>
+            <span>Создать комнату</span>
+          </button>
+          
+          <div class="lobby-divider"><span>или</span></div>
+          
+          <div class="join-form">
+            <input type="text" id="input-lobby-code" class="text-input lobby-code-input" placeholder="КОД КОМНАТЫ" maxlength="5">
+            <button class="btn-primary btn-join-lobby" id="btn-join-lobby">
+              <span>Войти</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Waiting Lobby Panel -->
+    <div class="lobby-container hidden" id="waiting-panel">
+      <div class="lobby-card">
+        <h3 class="lobby-title">Ожидание Игрока</h3>
+        <p class="lobby-desc">Поделитесь кодом комнаты со своим соперником.</p>
+        
+        <div class="room-code-display">
+          <span class="room-code-val" id="display-room-code">XXXXX</span>
+          <button class="btn-copy-code" id="btn-copy-code" title="Копировать код">
+            <svg viewBox="0 0 24 24" style="width: 20px; height: 20px; fill: currentColor;"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+          </button>
+        </div>
+
+        <div class="cyber-spinner-container">
+          <div class="cyber-spinner"></div>
+          <span class="spinner-text">Ищем сигнал соперника...</span>
+        </div>
+
+        <button class="btn-modal-secondary" id="btn-leave-lobby" style="width: 100%; margin-top: 10px;">
+          Покинуть комнату
+        </button>
+      </div>
     </div>
 
     <!-- Board -->
@@ -155,22 +205,43 @@
         <label class="input-label" style="display: block; margin-top: 15px; margin-bottom: 8px;">Выберите Аватар</label>
         <div class="avatar-grid" id="avatar-grid">
           <div class="avatar-opt" data-avatar-id="cyber-ninja" title="Cyber Ninja">
-            <span class="avatar-opt-char">🥷</span>
+            <svg class="avatar-svg cyan" viewBox="0 0 100 100">
+              <path d="M50 15 L58 42 L85 50 L58 58 L50 85 L42 58 L15 50 L42 42 Z" fill="none" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/>
+              <circle cx="50" cy="50" r="10" fill="none" stroke="currentColor" stroke-width="4"/>
+            </svg>
           </div>
           <div class="avatar-opt" data-avatar-id="synth-wave" title="Synthwave Core">
-            <span class="avatar-opt-char">🌅</span>
+            <svg class="avatar-svg magenta" viewBox="0 0 100 100">
+              <path d="M25 65 A25 25 0 1 1 75 65 Z" fill="none" stroke="currentColor" stroke-width="6"/>
+              <line x1="20" y1="65" x2="80" y2="65" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+              <line x1="25" y1="75" x2="75" y2="75" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+              <line x1="35" y1="83" x2="65" y2="83" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            </svg>
           </div>
           <div class="avatar-opt" data-avatar-id="byte-hex" title="Byte Hex">
-            <span class="avatar-opt-char">🤖</span>
+            <svg class="avatar-svg yellow" viewBox="0 0 100 100">
+              <polygon points="50,15 80,32 80,68 50,85 20,68 20,32" fill="none" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/>
+              <circle cx="50" cy="50" r="16" fill="none" stroke="currentColor" stroke-width="4"/>
+              <line x1="50" y1="15" x2="50" y2="34" stroke="currentColor" stroke-width="4"/>
+              <line x1="50" y1="66" x2="50" y2="85" stroke="currentColor" stroke-width="4"/>
+            </svg>
           </div>
           <div class="avatar-opt" data-avatar-id="neon-hacker" title="Neon Hacker">
-            <span class="avatar-opt-char">💻</span>
+            <svg class="avatar-svg green" viewBox="0 0 100 100">
+              <path d="M35 30 L20 50 L35 70" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M65 30 L80 50 L65 70" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+              <line x1="55" y1="25" x2="45" y2="75" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+            </svg>
           </div>
           <div class="avatar-opt" data-avatar-id="laser-phoenix" title="Laser Phoenix">
-            <span class="avatar-opt-char">🐦</span>
+            <svg class="avatar-svg orange" viewBox="0 0 100 100">
+              <path d="M50 25 L80 45 L50 85 L20 45 Z" fill="none" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/>
+              <path d="M10 50 L30 50 M70 50 L90 50" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+              <circle cx="50" cy="55" r="10" fill="none" stroke="currentColor" stroke-width="4"/>
+            </svg>
           </div>
           <div class="avatar-opt" data-avatar-id="google-photo" id="google-avatar-opt" title="Google Photo">
-            <span class="avatar-opt-char">🌐</span>
+            <span class="avatar-opt-char" style="font-size: 1.2rem;">🌐</span>
           </div>
         </div>
       </div>
